@@ -7,6 +7,7 @@ output*
 lib/synthesize/build/*
 lib/utils/bbox.c
 data/
+datasets/
 data_self/
 docker/
 ngc/

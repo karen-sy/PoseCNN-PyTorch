@@ -24,6 +24,7 @@ def test_image(network, dataset, im_color, im_depth=None, im_index=None):
 
     # compute image blob
     im = im_color.astype(np.float32, copy=True)
+    
     im -= cfg.PIXEL_MEANS
     height = im.shape[0]
     width = im.shape[1]
@@ -118,13 +119,12 @@ def test_image(network, dataset, im_color, im_depth=None, im_index=None):
         poses_refined = None
 
     im_pose, im_pose_refined, im_label = render_image(dataset, im_color, rois, poses, poses_refined, labels.cpu().numpy())
-    if cfg.TEST.VISUALIZE:
-        vis_test(dataset, im, im_depth, labels.cpu().numpy(), rois, poses, poses_refined, im_pose, im_pose_refined, out_vertex)
+    vis_test(dataset, im, im_depth, labels.cpu().numpy(), rois, poses, poses_refined, im_pose, im_pose_refined, out_vertex)
 
     return im_pose, im_pose_refined, im_label, labels.cpu().numpy(), rois, poses, poses_refined
 
 
-def vis_test(dataset, im, im_depth, label, rois, poses, poses_refined, im_pose, im_pose_refine, out_vertex=None, im_index=None):
+def vis_test(dataset, im, im_depth, label, rois, poses, poses_refined, im_pose, im_pose_refine, out_vertex=None, im_index=None, imgname=None):
 
     """Visualize a testing results."""
     import matplotlib.pyplot as plt
@@ -273,3 +273,7 @@ def vis_test(dataset, im, im_depth, label, rois, poses, poses_refined, im_pose, 
         plt.close()
     else:
         plt.show()
+
+
+    print("Saving img...")
+    plt.savefig("img1.png")

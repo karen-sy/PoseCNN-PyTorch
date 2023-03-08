@@ -20,7 +20,7 @@ try:
 except ImportError:
     import pickle as cPickle
 
-import datasets
+import datasets as datasets
 from fcn.config import cfg
 from utils.blob import pad_im, chromatic_transform, add_noise, add_noise_cuda
 from transforms3d.quaternions import mat2quat, quat2mat

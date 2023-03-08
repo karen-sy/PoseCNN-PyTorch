@@ -21,7 +21,7 @@ import scipy.io
 import glob
 
 import _init_paths
-from fcn.test_imageset import test_image
+from fcn.test_imageset import test_image, vis_test
 from fcn.config import cfg, cfg_from_file, yaml_from_file, get_output_dir
 from datasets.factory import get_dataset
 import networks
@@ -80,6 +80,10 @@ def parse_args():
 
 
 if __name__ == '__main__':
+    ##################
+    # Setup
+    ##################
+
     args = parse_args()
 
     print('Called with args:')
@@ -136,6 +140,7 @@ if __name__ == '__main__':
     # list images
     images_color = []
     filename = os.path.join(args.imgdir, args.color_name)
+
     files = glob.glob(filename)
     for i in range(len(files)):
         filename = files[i]
@@ -150,13 +155,13 @@ if __name__ == '__main__':
         images_depth.append(filename)
     images_depth.sort()
 
-    if cfg.TEST.VISUALIZE:
-        index_images = np.random.permutation(len(images_color))
-    else:
-        index_images = range(len(images_color))
-        resdir = args.imgdir + '_posecnn_results'
-        if not os.path.exists(resdir):
-            os.makedirs(resdir)
+    # if cfg.TEST.VISUALIZE:
+    #     index_images = np.random.permutation(len(images_color))
+    # else:
+    index_images = range(len(images_color))
+    resdir = args.imgdir + '_posecnn_results'
+    if not os.path.exists(resdir):
+        os.makedirs(resdir)
 
     # prepare network
     if args.pretrained:
@@ -173,6 +178,7 @@ if __name__ == '__main__':
     network.eval()
 
     print('loading 3D models')
+
     cfg.renderer = YCBRenderer(width=cfg.TRAIN.SYN_WIDTH, height=cfg.TRAIN.SYN_HEIGHT, gpu_id=args.gpu_id, render_marker=False)
     if cfg.TEST.SYNTHESIZE:
         cfg.renderer.load_objects(dataset.model_mesh_paths, dataset.model_texture_paths, dataset.model_colors)
@@ -191,6 +197,10 @@ if __name__ == '__main__':
         for i in cfg.TEST.CLASSES[1:]:
             sdf_files.append(dataset.model_sdf_paths[i-1])
         cfg.sdf_optimizer = sdf_optimizer(cfg.TEST.CLASSES[1:], sdf_files)
+
+    ##################
+    # TEST EACH IMAGE
+    ##################
 
     # for each image
     for i in index_images:
@@ -214,15 +224,18 @@ if __name__ == '__main__':
         # run network
         im_pose, im_pose_refined, im_label, labels, rois, poses, poses_refined = test_image(network, dataset, im, depth)
 
+        # from IPython import embed; embed()
         # save result
-        if not cfg.TEST.VISUALIZE:
-
+        # if not cfg.TEST.VISUALIZE:
+        if True:
             # map the roi index
             for j in range(rois.shape[0]):
                 rois[j, 1] = cfg.TRAIN.CLASSES.index(cfg.TEST.CLASSES[int(rois[j, 1])])
 
             result = {'labels': labels, 'rois': rois, 'poses': poses, 'poses_refined': poses_refined, 'intrinsic_matrix': dataset._intrinsic_matrix}
             head, tail = os.path.split(images_color[i])
+
+            # from IPython import embed; embed()
             filename = os.path.join(resdir, tail + '.mat')
             scipy.io.savemat(filename, result, do_compression=True)
             # rendered image
@@ -230,3 +243,6 @@ if __name__ == '__main__':
             cv2.imwrite(filename, im_pose[:, :, (2, 1, 0)])
             filename = os.path.join(resdir, tail + '_render_refined.jpg')
             cv2.imwrite(filename, im_pose_refined[:, :, (2, 1, 0)])
+
+            filename = os.path.join(resdir, tail + '_render_refined_panels.jpg')
+
