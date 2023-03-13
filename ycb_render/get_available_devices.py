@@ -8,7 +8,6 @@ import os
 
 def get_available_devices():
     executable_path = os.path.join(os.path.dirname(__file__), 'build')
-
     num_devices = int(subprocess.check_output(
         ["{}/query_devices".format(executable_path)]))
 

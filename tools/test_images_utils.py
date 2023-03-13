@@ -1,5 +1,6 @@
 import pprint
 import os
+from pathlib import Path
 import numpy as np
 import copy
 import cv2
@@ -13,10 +14,11 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data
 import torchvision.transforms as transforms
 from torch.autograd import Variable
+import _init_paths
+
 from lib.densefusion.network import PoseNet, PoseRefineNet
 from lib.densefusion.transformations import quaternion_matrix, quaternion_from_matrix
 
-import _init_paths
 from fcn.config import yaml_from_file
 from datasets.factory import get_dataset
 import networks
@@ -427,6 +429,12 @@ def run_DenseFusion(image_color, image_depth, meta_data, estimator, refiner, sce
             # my_result.append([0.0 for i in range(7)])
 
     ## SAVE VIZ
+    if not os.path.exists(densefusion_args.result_refine_dir):
+        Path(densefusion_args.result_refine_dir).mkdir(parents=True)
+        Path(densefusion_args.result_refine_dir + '/pred_txt').mkdir(parents=True)
+    if not os.path.exists(densefusion_args.result_wo_refine_dir):
+        Path(densefusion_args.result_wo_refine_dir).mkdir(parents=True)
+        Path(densefusion_args.result_wo_refine_dir + '/pred_txt').mkdir(parents=True)
     if img_with_pts_refined is not None:
         get_blended_image(image_color, img_with_pts_refined).save(f"{densefusion_args.result_refine_dir}/{scene_frame_name}.png")
     else:  # save blank img

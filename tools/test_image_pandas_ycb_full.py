@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pickle
+import _init_paths
 
 from test_images_utils import env_setup_posecnn, get_image_posecnn, run_posecnn, get_rgb_image, get_image_densefusion, get_blended_image, get_bbox, env_setup_densefusion, run_DenseFusion
 import easydict
@@ -28,7 +29,7 @@ if __name__ == '__main__':
     #############
     posecnn_args = easydict.EasyDict({
         'gpu_id':0, 
-        'pretrained':'trained_checkpoints/posecnn/checkpoints/ycb_object/vgg16_ycb_object_self_supervision_epoch_8.checkpoint.pth', 
+        'pretrained':'data/trained_checkpoints/posecnn/ycb_object/vgg16_ycb_object_self_supervision_epoch_8.checkpoint.pth', 
         'cfg_file':'experiments/cfgs/ycb_object.yml', 
         'dataset_name':'ycb_object_test', 
         'depth_name':None, # will process results from pik instead 
@@ -51,12 +52,12 @@ if __name__ == '__main__':
     #############
     densefusion_args = easydict.EasyDict({
         'dataset_root': 'datasets/pandas',
-        'model': 'trained_checkpoints/densefusion/trained_checkpoints/ycb/pose_model_26_0.012863246640872631.pth',
-        'refine_model': 'trained_checkpoints/densefusion/trained_checkpoints/ycb/pose_refine_model_69_0.009449292959118935.pth',
+        'model': 'data/trained_checkpoints/densefusion/ycb/pose_model_26_0.012863246640872631.pth',
+        'refine_model': 'data/trained_checkpoints/densefusion/ycb/pose_refine_model_69_0.009449292959118935.pth',
         'dataset_config_dir':'datasets/pandas/dataset_config',
-        'ycb_toolbox_dir':None, #'YCB_Video_toolbox',
-        'result_wo_refine_dir':'experiments/eval_result/pandas/Densefusion_wo_refine_result', #'experiments/eval_result/ycb/Densefusion_wo_refine_result'
-        'result_refine_dir':'experiments/eval_result/pandas/Densefusion_iterative_result' #'experiments/eval_result/ycb/Densefusion_iterative_result'
+        'ycb_toolbox_dir':None,  
+        'result_wo_refine_dir':'experiments/eval_result/pandas/Densefusion_wo_refine_result',  
+        'result_refine_dir':'experiments/eval_result/pandas/Densefusion_iterative_result' 
     })
 
     df_estimator, df_refiner, class_names, cld = env_setup_densefusion(densefusion_args)
