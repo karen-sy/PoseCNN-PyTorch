@@ -29,10 +29,10 @@ This component of Jax3DP3 runs end-to-end PoseCNN (segmentation) and DenseFusion
         make install
         # make a symbolic link
         cd /usr/local/include
-        ln -sf eigen3/Eigen Eigen
-        ln -sf eigen3/unsupported unsupported
-        ln -sf eigen3/Eigen /usr/include/Eigen
-        cp -r /usr/local/include/eigen3 /usr/include/eigen3
+        sudo ln -sf eigen3/Eigen Eigen
+        sudo ln -sf eigen3/unsupported unsupported
+        sudo ln -sf eigen3/Eigen /usr/include/Eigen
+        sudo cp -r /usr/local/include/eigen3 /usr/include/eigen3
     ```
 
 3. Install Sophus from the Github source code [here](https://github.com/yuxng/Sophus)
@@ -99,7 +99,7 @@ run the following script
     ```Shell
     ./experiments/scripts/posecnn/demo.sh
     ```
-
+- If you get an error, try rebuilding libassimp 4.1.0 from source, following the instructions [here](https://github.com/assimp/assimp/blob/master/Build.md)
 - Results will be in $ROOT/datasets/posecnn/demo.
 
 ### PoseCNN + DenseFusion Demo
