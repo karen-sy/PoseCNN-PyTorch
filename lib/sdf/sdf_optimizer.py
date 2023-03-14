@@ -6,7 +6,7 @@ import sys
 import cv2
 import time
 from .sdf_utils import *
-import _init_paths
+from tools import _init_paths
 from fcn.config import cfg
 from layers.sdf_matching_loss import SDFLoss
 

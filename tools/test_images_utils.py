@@ -1,5 +1,6 @@
 import pprint
 import os
+import os.path as osp
 from pathlib import Path
 import numpy as np
 import copy
@@ -14,7 +15,7 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data
 import torchvision.transforms as transforms
 from torch.autograd import Variable
-import _init_paths
+import tools._init_paths
 
 from lib.densefusion.network import PoseNet, PoseRefineNet
 from lib.densefusion.transformations import quaternion_matrix, quaternion_from_matrix
@@ -249,7 +250,9 @@ def env_setup_densefusion(densefusion_args):
             break
         class_input = class_input[:-1]
         class_names.append(class_input)
-        input_file = open('{0}/models/{1}/points.xyz'.format('data', class_input))
+        this_dir = osp.dirname(__file__)
+        dir_path = osp.join(this_dir, '..','data')
+        input_file = open('{0}/models/{1}/points.xyz'.format(dir_path, class_input))
         cld[class_id] = []
         while 1:
             input_line = input_file.readline()
@@ -264,7 +267,7 @@ def env_setup_densefusion(densefusion_args):
 
     return estimator, refiner, class_names, cld
 
-def run_DenseFusion(image_color, image_depth, meta_data, estimator, refiner, scene_frame_name, class_names, cld, densefusion_args, posecnn_meta=None):
+def run_DenseFusion(image_color, image_depth, meta_data, estimator, refiner, class_names, cld, densefusion_args, scene_frame_name='out', posecnn_meta=None):
     # img = Image.open('{0}/{1}-color.png'.format(opt.dataset_root, testlist[now]))
     # depth = np.array(Image.open('{0}/{1}-depth.png'.format(opt.dataset_root, testlist[now])))
     # posecnn_meta = scio.loadmat('{0}/results_PoseCNN_pandas/{1}.mat'.format(ycb_toolbox_dir, '%06d' % now))
@@ -406,8 +409,8 @@ def run_DenseFusion(image_color, image_depth, meta_data, estimator, refiner, sce
                 my_r = my_r_final
                 my_t = my_t_final
 
-            # Here 'my_pred' is the final pose estimation result after refinement ('my_r': quaternion, 'my_t': translation)
-            my_result.append({class_names[int(itemid)]: {'rot_q':my_r, 'tr':my_t}})
+            # Here 'my_pred' is the final pose estimation result after refinement (class_name: {'class_id':int, 'rot_q': quaternion, 'tr': translation})
+            my_result.append({class_names[int(itemid)]: {'class_id': int(itemid), 'rot_q':my_r, 'tr':my_t}})
 
 
             ##################
