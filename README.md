@@ -10,13 +10,53 @@ This component of Jax3DP3 runs end-to-end PoseCNN (segmentation) and DenseFusion
 - CUDA 9.1 or above
 - Python3
 
-### Installation
+### Installation ([Reference](https://github.com/yuxng/PoseCNN/issues/73))
 
 1. Install [PyTorch](https://pytorch.org/)
 
 2. Install Eigen from the Github source code [here](https://github.com/eigenteam/eigen-git-mirror)
 
+    ```Shell
+        # change eigen version
+        apt remove libeigen3-dev
+        cd /opt
+        git clone https://gitlab.com/libeigen/eigen.git
+        cd eigen
+        git checkout 3.3.0
+        mkdir build
+        cd build
+        cmake ..
+        make
+        make install
+        # make a symbolic link
+        cd /usr/local/include
+        ln -sf eigen3/Eigen Eigen
+        ln -sf eigen3/unsupported unsupported
+        ln -sf eigen3/Eigen /usr/include/Eigen
+        # TODO make a patch in
+        #/usr/local/include/eigen3/Core
+        #change: include <math_functions.hpp> TO: include <cuda_runtime.h>
+        cp -r /usr/local/include/eigen3 /usr/include/eigen3
+    ```
+
 3. Install Sophus from the Github source code [here](https://github.com/yuxng/Sophus)
+    
+    ```Shell
+        cd /opt
+        git clone https://github.com/strasdat/Sophus
+        cd Sophus
+        git reset --hard ceb6380a1584b300e687feeeea8799353d48859f
+        # TODO include patch in CMake  (do we still need?)
+        #-find_package(Eigen3 REQUIRED)
+        #+find_package(PkgConfig)
+        #+pkg_search_module(Eigen3 REQUIRED eigen3)
+        # add -Wno-error=deprecated-copy
+        mkdir build
+        cd build
+        cmake ..
+        make
+        make install
+    ```
 
 4. Install python packages
    ```Shell
