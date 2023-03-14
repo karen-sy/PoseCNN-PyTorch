@@ -22,7 +22,6 @@ This component of Jax3DP3 runs end-to-end PoseCNN (segmentation) and DenseFusion
         cd /opt
         git clone https://gitlab.com/libeigen/eigen.git
         cd eigen
-        git checkout 3.3.0
         mkdir build
         cd build
         cmake ..
@@ -33,9 +32,6 @@ This component of Jax3DP3 runs end-to-end PoseCNN (segmentation) and DenseFusion
         ln -sf eigen3/Eigen Eigen
         ln -sf eigen3/unsupported unsupported
         ln -sf eigen3/Eigen /usr/include/Eigen
-        # TODO make a patch in
-        #/usr/local/include/eigen3/Core
-        #change: include <math_functions.hpp> TO: include <cuda_runtime.h>
         cp -r /usr/local/include/eigen3 /usr/include/eigen3
     ```
 

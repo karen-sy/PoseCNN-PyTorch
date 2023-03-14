@@ -6,6 +6,9 @@
 output*
 lib/synthesize/build/*
 lib/utils/bbox.c
+lib/layers/build
+lib/layers/dist
+lib/layers/posecnn.egg-info
 data/
 datasets/
 data_self/
