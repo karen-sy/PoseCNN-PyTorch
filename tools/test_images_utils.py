@@ -33,8 +33,8 @@ from fcn.test_imageset import test_image
 norm = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 border_list = [-1, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680]
 
-img_width = 600
-img_length = 600
+img_width = 480
+img_length = 640
 
 
 # torch.backends.cudnn.enabled = False
@@ -44,7 +44,7 @@ ymap = np.array([[i for i in range(img_length)] for j in range(img_width)])
 num_obj = 21
 num_points = 1000
 num_points_mesh = 500
-iteration = 2
+iteration = 10000 # 2 default
 bs = 1
 
 
@@ -291,8 +291,13 @@ def run_DenseFusion(image_color, image_depth, meta_data, estimator, refiner, cla
     cam_cy = K[1][-1]
     cam_fx = K[0][0]
     cam_fy = K[1][1]
-    cam_scale = 1 #10000.0
-    img_width, img_length = image_depth.shape
+    # cam_scale = 1 #10000.0
+
+    # cam_cx = 312.9869
+    # cam_cy = 241.3109
+    # cam_fx = 1066.778
+    # cam_fy = 1067.487
+    cam_scale = 1.0
 
     if posecnn_meta is None:
         posecnn_meta = scio.loadmat(f'{densefusion_args.dataset_root}/data/results_PoseCNN_pandas/{scene_frame_name}.mat')
@@ -426,10 +431,12 @@ def run_DenseFusion(image_color, image_depth, meta_data, estimator, refiner, cla
                 img_with_pts_refined = cv2.circle(img_with_pts_refined, (x,y), 1, (0,255,255))  
             
         except (ZeroDivisionError, ValueError, IndexError):
+            print("ERROR")
+            from IPython import embed; embed() 
             print("PoseCNN Detector Lost {0} at Keyframe".format(itemid))
-            # from IPython import embed; embed()
-            # my_result_wo_refine.append([0.0 for i in range(7)])
-            # my_result.append([0.0 for i in range(7)])
+            from IPython import embed; embed()
+            my_result_wo_refine.append([0.0 for i in range(7)])
+            my_result.append([0.0 for i in range(7)])
 
     ## SAVE VIZ
     if not os.path.exists(densefusion_args.result_refine_dir):
