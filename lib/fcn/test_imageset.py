@@ -272,8 +272,6 @@ def vis_test(dataset, im, im_depth, label, rois, poses, poses_refined, im_pose, 
         fig.savefig(filename)
         plt.close()
     else:
-        plt.show()
-
-
-    print("Saving img...")
-    plt.savefig("img1.png")
+        # plt.show()
+        print("Saving img...")
+        plt.savefig("img1.png")
